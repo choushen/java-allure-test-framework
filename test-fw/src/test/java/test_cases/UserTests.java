@@ -12,7 +12,7 @@ public class UserTests {
 
         // Site I'll be testing against
         // https://documenter.getpostman.com/view/4012288/TzK2bEa8#intro
-        // https://thinking-tester-contact-list.herokuapp.com/
+        // https://thinking-tester-contact-list.herokuapp.com/d
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--start-maximized");
