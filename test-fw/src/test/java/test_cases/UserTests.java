@@ -1,15 +1,16 @@
 package test_cases;
 
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.Test;
 
 public class UserTests {
 
     @Test
-    public static void registerToTheApplication () {
+    public void registerToTheApplication () {
 
         WebDriver _driver = new ChromeDriver();
+        _driver.get("https://mvnrepository.com/artifact/junit/junit/4.13.2");
 
     }
 
