@@ -36,3 +36,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# IntelliJ IDEA specific
+*.iml
+*.iws
+*.ipr
+out/
+test-fw/.idea/
+./idea/
