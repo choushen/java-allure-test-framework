@@ -5,14 +5,16 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+
 public class UserTests {
 
     @Test
     public void registerToTheApplication () {
+        
+        // Automatically manage ChromeDriver binary
+        WebDriverManager.chromedriver().setup();
 
-        // Site I'll be testing against
-        // https://documenter.getpostman.com/view/4012288/TzK2bEa8#intro
-        // https://thinking-tester-contact-list.herokuapp.com/d
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--start-maximized");
