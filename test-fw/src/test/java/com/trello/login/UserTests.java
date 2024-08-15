@@ -1,5 +1,7 @@
 package com.trello.login;
 
+import java.sql.Driver;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
@@ -14,17 +16,17 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class UserTests {
 
     private WebDriver driver;
-    
+    private DriverFactory driverFactory = new DriverFactory();
 
     @Test
     public void loginToTheApplicaiton () {
         
 
-        driver = new DriverFactory().initDriver(); 
+        driver = driverFactory.initDriver(); 
 
         driver.get("https://trello.com");
 
-        DriverFactory.driverFactory.cleanDriver(driver);
+        driverFactory.destroyDriver(driver);
 
     }
 

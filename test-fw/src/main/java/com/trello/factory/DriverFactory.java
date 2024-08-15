@@ -12,49 +12,49 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
     
-    private WebDriver driver;
-    private String browser;
+    private WebDriver _driver;
+    private String _browser;
 
 
     public WebDriver initDriver() {
         try {
 
-            browser = System.getProperty("browser");
+            _browser = System.getProperty("browser");
 
-            if (browser == null) {
-                browser = "chrome";
+            if (_browser == null) {
+                _browser = "chrome";
             }
 
-            switch (browser.toLowerCase()) {
+            switch (_browser.toLowerCase()) {
                 case "edge":
                 WebDriverManager.edgedriver().setup();
                 EdgeOptions edgeOptions = new EdgeOptions();
                 edgeOptions.addArguments("--start-maximized");
-                driver = new EdgeDriver(edgeOptions);
+                _driver = new EdgeDriver(edgeOptions);
                 break;
 
                 case "firefox":
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 firefoxOptions.addArguments("--start-maximized");
-                driver = new FirefoxDriver(firefoxOptions);
+                _driver = new FirefoxDriver(firefoxOptions);
                 break;
 
                 default:
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("--start-maximized");
-                driver = new ChromeDriver(chromeOptions);
+                _driver = new ChromeDriver(chromeOptions);
                 break;
             }
-            return driver;
+            return _driver;
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
     }
 
-    public void destroyDriver() {
+    public void destroyDriver(WebDriver driver) {
         // Clean up the WebDriver instance
         try {
             if(driver != null)
