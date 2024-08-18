@@ -1,58 +1,62 @@
 package com.trello.login;
 
-import java.sql.Driver;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.trello.factory.DriverFactory;
+import com.trello.base.BaseTest;
+import java.time.Duration;
 
-import io.cucumber.java.AfterAll;
-import io.github.bonigarcia.wdm.WebDriverManager;
+public class UserTests extends BaseTest {
 
-public class UserTests {
-
-    private WebDriver driver;
-    private DriverFactory driverFactory = new DriverFactory();
+    // CSS Selectors as constants
+    private static final By LOGIN_BUTTON_SELECTOR = By.cssSelector("a[data-uuid='MJFtCCgVhXrVl7v9HA7EH_login']");
+    private static final By USERNAME_INPUT_SELECTOR = By.cssSelector("#username");
+    private static final By PASSWORD_INPUT_SELECTOR = By.cssSelector("#password");
+    private static final By LOGIN_SUBMIT_BUTTON_SELECTOR = By.cssSelector("#login-submit");
+    private static final By DASHBOARD_BOARDS_LIST_SELECTOR = By.cssSelector("ul.boards-page-board-section-list");
 
     @Test
-    public void loginToTheApplicaiton () {
-        
+    public void loginToTheApplication() {
+
+        // Initialize WebDriverWait
+        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         String username = System.getenv("TRELLO_USERNAME");
         String password = System.getenv("TRELLO_PW");
 
-        driver = driverFactory.initDriver(); 
-
         driver.get("https://trello.com");
         
-        // Login button
-        WebElement loginButtonSelector = driver.findElement(By.cssSelector("a[data-uuid='MJFtCCgVhXrVl7v9HA7EH_login']"));
-        loginButtonSelector.click();
+        // Click login button
+        WebElement loginButton = driver.findElement(LOGIN_BUTTON_SELECTOR);
+        loginButton.click();
 
+        // Enter username and submit
+        WebElement userEmailInput = wait.until(d -> d.findElement(USERNAME_INPUT_SELECTOR));
+        userEmailInput.sendKeys(username);
 
-        // Enter information
-        WebElement userEmailInputSelector = driver.findElement(By.cssSelector("#username"));
-        userEmailInputSelector.sendKeys(username);
+        WebElement loginSubmitButton = driver.findElement(LOGIN_SUBMIT_BUTTON_SELECTOR);
+        loginSubmitButton.click();
 
-        WebElement continueButtonSelector = driver.findElement(By.cssSelector("#login-submit"));
-        continueButtonSelector.click();
+        // Enter password and submit
+        WebElement userPasswordInput = wait.until(d -> d.findElement(PASSWORD_INPUT_SELECTOR));
+        userPasswordInput.sendKeys(password);
 
-        WebElement userPasswordInputSelector = driver.findElement(By.cssSelector("#password"));
-        userPasswordInputSelector.sendKeys(password);
+        loginSubmitButton.click(); // Reuse the previously found submit button
 
-        WebElement submitButtonSelector = driver.findElement(By.cssSelector("#login-submit"));
-        submitButtonSelector.click();
+        // Handle 2FA if present
+        handle2FA();
 
+        // Verify user is logged in
+        verifyLogin();
+    }
 
-        // Handle 2FA
+    private void handle2FA() {
         try {
             WebElement button = driver.findElement(By.id("mfa-promote-dismiss"));
             if (button.isDisplayed()) {
@@ -62,13 +66,11 @@ public class UserTests {
             // Button is not present, do nothing or handle accordingly
             System.out.println("2FA button is not present... skipping");
         }
-
-        // Verify logged in
-        WebElement loginDashboardBoardsListSelector = driver.findElement(By.cssSelector("ul.boards-page-board-section-list"));
-        Assert.assertSame(true, loginDashboardBoardsListSelector.isDisplayed());
-
-        driverFactory.destroyDriver(driver);
     }
 
-
+    private void verifyLogin() {
+        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement loginDashboardBoardsList = wait.until(d -> d.findElement(DASHBOARD_BOARDS_LIST_SELECTOR));
+        Assert.assertTrue(loginDashboardBoardsList.isDisplayed(), "Dashboard is not displayed, login might have failed.");
+    }
 }
