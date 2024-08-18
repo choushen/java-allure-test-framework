@@ -31,11 +31,11 @@ A robust, scalable test automation framework built using Java, Selenium, and Tes
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/selenium-test-framework.git
+    git clone https://github.com/choushen/java-allure-test-framework.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd selenium-test-framework
+    cd java-allure-test-framework
     ```
 3. Install dependencies:
     ```bash
