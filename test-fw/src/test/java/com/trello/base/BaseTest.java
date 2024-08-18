@@ -8,17 +8,21 @@ import com.trello.factory.DriverFactory;
 
 public class BaseTest {
     
-    protected WebDriver driver;
+    protected ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private DriverFactory driverFactory = new DriverFactory();
 
     @BeforeMethod
     public void setup() {
-        driver = driverFactory.initDriver(); 
+        WebDriver webDriver = driverFactory.initDriver(); 
+        this.driver.set(webDriver);
     }
 
     @AfterMethod
     public void teardown() {
-        driverFactory.destroyDriver(driver);
+        if(driver.get() != null) {
+            driverFactory.destroyDriver(driver.get());
+            driver.remove();
+        }
     }
 
 }

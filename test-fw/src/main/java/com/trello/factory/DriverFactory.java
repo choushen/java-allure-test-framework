@@ -12,47 +12,46 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
     
-    private WebDriver _driver;
-    private String _browser;
-
 
     public WebDriver initDriver() {
-        try {
+        try {           
+            WebDriver driver;
+            String browser;
 
-            _browser = System.getProperty("browser");
+            browser = System.getProperty("browser");
 
-            if (_browser == null) {
-                _browser = "chrome";
+            if (browser == null) {
+                browser = "chrome";
             }
 
-            switch (_browser.toLowerCase()) {
+            switch (browser.toLowerCase()) {
                 case "edge":
                 WebDriverManager.edgedriver().setup();
                 EdgeOptions edgeOptions = new EdgeOptions();
                 edgeOptions.addArguments("--start-maximized");
-                _driver = new EdgeDriver(edgeOptions);
+                driver = new EdgeDriver(edgeOptions);
                 break;
 
                 case "firefox":
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 firefoxOptions.addArguments("--start-maximized");
-                _driver = new FirefoxDriver(firefoxOptions);
+                driver = new FirefoxDriver(firefoxOptions);
                 break;
 
                 default:
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.addArguments("--start-maximized");
-                _driver = new ChromeDriver(chromeOptions);
+                driver = new ChromeDriver(chromeOptions);
                 break;
             }
-            return _driver;
+            return driver;
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-    }
+    } // end
 
     public void destroyDriver(WebDriver driver) {
         // Clean up the WebDriver instance
@@ -67,6 +66,6 @@ public class DriverFactory {
         } finally {
             driver = null;
         }
-    }
+    } // end
 
-}
+} // end

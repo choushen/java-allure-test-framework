@@ -6,17 +6,13 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import java.time.Duration;
 
 
-public class LoginPage {
+public class LoginPage extends BasePage {
     
     // Properties - Elements
-    private Wait<WebDriver> wait;
-    private WebDriver loginPageDriver;
-
     private static final By LOGIN_BUTTON_SELECTOR = By.cssSelector("a[data-uuid='MJFtCCgVhXrVl7v9HA7EH_login']");
     private static final By USERNAME_INPUT_SELECTOR = By.cssSelector("#username");
     private static final By PASSWORD_INPUT_SELECTOR = By.cssSelector("#password");
@@ -24,43 +20,52 @@ public class LoginPage {
     private static final By DASHBOARD_BOARDS_LIST_SELECTOR = By.cssSelector("ul.boards-page-board-section-list");
 
     // Constructor
-    public LoginPage(WebDriver driver) {
-        this.loginPageDriver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-    }
+    private LoginPage() {
+        // Set constructor to private to prevent instantiation
+    } // end
+
+    // Singleton Helper
+    private static class SingletonHelper{
+        private static final LoginPage INSTANCE = new LoginPage();
+    } // end
+
+    // Singleton Instance
+    public static LoginPage getInstance() {
+        return SingletonHelper.INSTANCE;
+    } // end
 
     // Methods - Steps
 
-    public void navigateToLoginPage() {
-        loginPageDriver.get("https://trello.com");
-    }
+    public void navigateToLoginPage(WebDriver driver) {
+        driver.get("https://trello.com");
+    } // end
 
-    public void login(String username, String password) {
+    public void login(WebDriver driver, String username, String password) {
 
                 // Click login button
-        WebElement loginButton = loginPageDriver.findElement(LOGIN_BUTTON_SELECTOR);
+        WebElement loginButton = driver.findElement(LOGIN_BUTTON_SELECTOR);
         loginButton.click();
 
         // Enter username and submit
-        WebElement userEmailInput = wait.until(d -> d.findElement(USERNAME_INPUT_SELECTOR));
+        WebElement userEmailInput = waitForElementToBeVisible(driver, USERNAME_INPUT_SELECTOR, Duration.ofSeconds(5));
         userEmailInput.sendKeys(username);
 
-        WebElement loginSubmitButton = loginPageDriver.findElement(LOGIN_SUBMIT_BUTTON_SELECTOR);
+        WebElement loginSubmitButton = driver.findElement(LOGIN_SUBMIT_BUTTON_SELECTOR);
         loginSubmitButton.click();
 
-        loginPageDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
 
         // Enter password and submit
-        WebElement userPasswordInput = wait.until(d -> d.findElement(PASSWORD_INPUT_SELECTOR));
+        WebElement userPasswordInput = waitForElementToBeVisible(driver, PASSWORD_INPUT_SELECTOR, Duration.ofSeconds(10));
         userPasswordInput.sendKeys(password);
 
         loginSubmitButton.click(); // Reuse the previously found submit button
 
-    } // login end
+    } // end
 
-    public void handle2FA() {
+    public void handle2FA(WebDriver driver) {
         try {
-            WebElement button = loginPageDriver.findElement(By.id("mfa-promote-dismiss"));
+            WebElement button = driver.findElement(By.id("mfa-promote-dismiss"));
             if (button.isDisplayed()) {
                 button.click();
             }
@@ -68,11 +73,12 @@ public class LoginPage {
             // Button is not present, do nothing or handle accordingly
             System.out.println("2FA button is not present... skipping");
         }
-    }
+    } // end
 
-    public void verifyLogin() {
-        WebElement loginDashboardBoardsList = wait.until(d -> d.findElement(DASHBOARD_BOARDS_LIST_SELECTOR));
+    public void verifyLogin(WebDriver driver) {
+        WebElement loginDashboardBoardsList = waitForElementToBeVisible(driver, DASHBOARD_BOARDS_LIST_SELECTOR, Duration.ofSeconds(10));
+        
         Assert.assertTrue(loginDashboardBoardsList.isDisplayed(), "Dashboard is not displayed, login might have failed.");
-    }
+    } // end
 
-}
+} // end
